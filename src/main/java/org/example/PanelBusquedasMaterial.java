@@ -1,9 +1,13 @@
 package org.example;
+
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
+import java.util.List;
 
 public class PanelBusquedasMaterial extends JPanel {
+
+    private final Biblioteca biblioteca;
 
     private final JTextField textoBusqueda;
     private final JComboBox<String> comboTipoBusqueda;
@@ -11,9 +15,11 @@ public class PanelBusquedasMaterial extends JPanel {
     private final DefaultTableModel modeloTabla;
     private final JLabel etiquetaEstado;
 
-    public PanelBusquedasMaterial() {
-        setLayout(new BorderLayout(15,15));
-        setBorder(BorderFactory.createEmptyBorder(15,15,15,15));
+    public PanelBusquedasMaterial(Biblioteca biblioteca) {
+        this.biblioteca = biblioteca;
+
+        setLayout(new BorderLayout(15, 15));
+        setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
 
         JPanel panelControles = new JPanel(new GridBagLayout());
         panelControles.setBorder(BorderFactory.createTitledBorder("Criterios de Búsqueda"));
@@ -30,7 +36,7 @@ public class PanelBusquedasMaterial extends JPanel {
         restricciones.gridx = 0; restricciones.gridy = 1;
         panelControles.add(new JLabel("Tipo de Búsqueda:"), restricciones);
         restricciones.gridx = 1; restricciones.gridy = 1;
-        comboTipoBusqueda = new JComboBox<>(new String[]{"Búsqueda Exacta (Código/Título)", "Búsqueda Flexible (Aproximada)"});
+        comboTipoBusqueda = new JComboBox<>(new String[]{"Búsqueda por Código", "Búsqueda por Título"});
         panelControles.add(comboTipoBusqueda, restricciones);
 
         restricciones.gridx = 0; restricciones.gridy = 2; restricciones.gridwidth = 2;
@@ -44,7 +50,7 @@ public class PanelBusquedasMaterial extends JPanel {
         JPanel panelResultados = new JPanel(new BorderLayout(5, 5));
         panelResultados.setBorder(BorderFactory.createTitledBorder("Resultados de la Búsqueda"));
 
-        String[] columnas = {"Código", "Título", "Tipo", "Complejidad", "Coincidencia"};
+        String[] columnas = {"Código", "Título", "Estado Préstamo"};
         modeloTabla = new DefaultTableModel(columnas, 0);
         tablaResultados = new JTable(modeloTabla);
         JScrollPane panelDesplazamientoTabla = new JScrollPane(tablaResultados);
@@ -57,9 +63,10 @@ public class PanelBusquedasMaterial extends JPanel {
 
         add(panelResultados, BorderLayout.CENTER);
     }
+
     private void ejecutarBusqueda() {
         String termino = textoBusqueda.getText().trim();
-        String tipoBusqueda = (String) comboTipoBusqueda.getSelectedItem();
+        int opcion = comboTipoBusqueda.getSelectedIndex();
 
         if (termino.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Por favor ingrese un término de búsqueda.", "Campo Vacío", JOptionPane.WARNING_MESSAGE);
@@ -67,6 +74,31 @@ public class PanelBusquedasMaterial extends JPanel {
         }
 
         modeloTabla.setRowCount(0);
-        etiquetaEstado.setText(" Búsqueda ejecutada para: '" + termino + "' usando " + tipoBusqueda);
+
+        if (opcion == 0) {
+            try {
+                int codigo = Integer.parseInt(termino);
+                MaterialBibliografico material = biblioteca.buscarPorCodigo(codigo);
+
+                if (material != null) {
+                    String estado = material.disponible() ? "Disponible" : "Prestado";
+                    modeloTabla.addRow(new Object[]{material.getCodigo(), material.getTitulo(), estado});
+                    etiquetaEstado.setText(" Búsqueda finalizada: 1 coincidencia encontrada.");
+                } else {
+                    etiquetaEstado.setText(" No se encontró ningún material con el código: " + codigo);
+                }
+            } catch (NumberFormatException e) {
+                JOptionPane.showMessageDialog(this, "El código debe ser un valor numérico.", "Error de Formato", JOptionPane.ERROR_MESSAGE);
+            }
+        } else {
+            List<MaterialBibliografico> resultados = biblioteca.buscarPorTitulo(termino);
+
+            for (MaterialBibliografico mat : resultados) {
+                String estado = mat.disponible() ? "Disponible" : "Prestado";
+                modeloTabla.addRow(new Object[]{mat.getCodigo(), mat.getTitulo(), estado});
+            }
+
+            etiquetaEstado.setText(" Búsqueda por título finalizada: " + resultados.size() + " coincidencia(s) encontrada(s).");
+        }
     }
 }

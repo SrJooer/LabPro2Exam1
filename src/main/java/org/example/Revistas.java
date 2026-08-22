@@ -2,7 +2,7 @@
 package org.example;
 import java.awt.Image;
 
-public abstract class Revistas extends MaterialBibliografico{
+public  class Revistas extends MaterialBibliografico{
     private int numeroEdicion;
     private Periocidad periocidad;
 

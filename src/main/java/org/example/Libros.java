@@ -3,7 +3,7 @@ package org.example;
 import java.awt.Image;
 
 
-public abstract class Libros extends MaterialBibliografico{
+public  class Libros extends MaterialBibliografico{
     private String autor;
     private int numeroPaginas;
     private int ISBN;

@@ -1,5 +1,6 @@
 package org.example.usuarios;
 
+import org.example.DatosNulosExcepcion;
 import org.example.NivelComplejidad;
 
 public class UsuarioPremium extends Usuario {
@@ -10,7 +11,7 @@ public class UsuarioPremium extends Usuario {
 
     private int aniosAntiguedad;
 
-    public UsuarioPremium(String id, String nombre) {
+    public UsuarioPremium(String id, String nombre) throws DatosNulosExcepcion {
         super(id, nombre);
     }
 

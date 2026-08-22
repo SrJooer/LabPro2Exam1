@@ -7,9 +7,11 @@ import java.awt.*;
 public class MenuPrincipal  extends JFrame {
 
     private final EmpleadoAutorizado empleadoActual;
+    private final Biblioteca biblioteca;
 
     public MenuPrincipal(EmpleadoAutorizado empleado) {
         this.empleadoActual = empleado;
+        this.biblioteca = new Biblioteca();
 
         setTitle("Menu Principal");
         setSize(1000, 1000);
@@ -37,10 +39,10 @@ public class MenuPrincipal  extends JFrame {
         JTabbedPane tabsMenu = new JTabbedPane();
         tabsMenu.setFont(new Font("SansSerif", Font.PLAIN, 14));
 
-        tabsMenu.addTab("Catálogo de Materiales", new PanelCatalogoMateriales());
+        tabsMenu.addTab("Catálogo de Materiales", new PanelCatalogoMateriales(biblioteca));
         tabsMenu.addTab("Usuarios", new PanelClientes());
         tabsMenu.addTab("Préstamos y Reservas", crearPanelModulo("Gestión de Préstamos, Devoluciones y Cola de Espera"));
-        tabsMenu.addTab("Búsqueda de Material", new PanelBusquedasMaterial());
+        tabsMenu.addTab("Búsqueda de Material", new PanelBusquedasMaterial(biblioteca));
         tabsMenu.addTab("Ordenamiento por Filtros", crearPanelModulo("Ordenamiento por Filtros"));
 
         add(tabsMenu, BorderLayout.CENTER);
