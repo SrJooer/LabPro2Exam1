@@ -3,6 +3,8 @@ package org.example.usuarios;
 import org.example.DatosNulosExcepcion;
 import org.example.NivelComplejidad;
 
+import javax.xml.crypto.Data;
+
 public class UsuarioEstandar extends Usuario {
 
     private static final String TIPO_PERFIL = "Estandar";

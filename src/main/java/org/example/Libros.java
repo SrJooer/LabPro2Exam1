@@ -1,9 +1,9 @@
+
 package org.example;
 
 import java.awt.Image;
 
-
-public class Libros extends MaterialBibliografico{
+public class Libros extends MaterialBibliografico {
     private String autor;
     private int numeroPaginas;
     private int ISBN;
@@ -16,17 +16,17 @@ public class Libros extends MaterialBibliografico{
     }
 
     @Override
-    public String obtenerDescripcion(){
-         return "Libro: \"" + titulo + "\" de " + autor +
-           " (" + numeroPaginas + " páginas, ISBN: " + ISBN + ")";
+    public String obtenerDescripcion() {
+        return "Libro: \"" + titulo + "\" de " + autor +
+                " (" + numeroPaginas + " páginas, ISBN: " + ISBN + ")";
     }
-    
+
     @Override
-    public int calcularDias(){
-        int diasBase=diasMaximo;
-        return diasBase+nivel.getDiasAdicionales();
-    
+    public int calcularDias() {
+        int diasBase = diasMaximo;
+        return diasBase + nivel.getDiasAdicionales();
     }
+
     public String getAutor() {
         return autor;
     }
@@ -50,8 +50,4 @@ public class Libros extends MaterialBibliografico{
     public void setISBN(int ISBN) {
         this.ISBN = ISBN;
     }
-    
-    
-    
-    
 }

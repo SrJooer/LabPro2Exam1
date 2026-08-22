@@ -5,6 +5,7 @@ import org.example.usuarios.Usuario;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
+import java.awt.event.HierarchyEvent;
 import java.util.List;
 
 public class PanelReservas extends JPanel {
@@ -115,19 +116,33 @@ public class PanelReservas extends JPanel {
         panelActivas.add(desplazamientoActivas, BorderLayout.CENTER);
         add(panelActivas, BorderLayout.SOUTH);
 
-        cargarCombos();
+        addHierarchyListener(e -> {
+            if ((e.getChangeFlags() & HierarchyEvent.SHOWING_CHANGED) != 0 && isShowing()) {
+                refrescar();
+            }
+        });
+
         refrescar();
     }
 
-    private void cargarCombos() {
+    public void cargarCombos() {
+        Usuario usuarioSeleccionado = (Usuario) comboUsuarios.getSelectedItem();
+        MaterialBibliografico materialSeleccionado = (MaterialBibliografico) comboMateriales.getSelectedItem();
+
         comboUsuarios.removeAllItems();
         for (Usuario usuario : biblioteca.getUsuarios()) {
             comboUsuarios.addItem(usuario);
+        }
+        if (usuarioSeleccionado != null) {
+            comboUsuarios.setSelectedItem(usuarioSeleccionado);
         }
 
         comboMateriales.removeAllItems();
         for (MaterialBibliografico material : biblioteca.getCatalogo()) {
             comboMateriales.addItem(material);
+        }
+        if (materialSeleccionado != null) {
+            comboMateriales.setSelectedItem(materialSeleccionado);
         }
     }
 
@@ -185,7 +200,8 @@ public class PanelReservas extends JPanel {
         }
     }
 
-    private void refrescar() {
+    public void refrescar() {
+        cargarCombos();
         actualizarDetalleMaterial();
         actualizarTablaActivas();
     }

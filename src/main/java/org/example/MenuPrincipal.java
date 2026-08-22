@@ -1,5 +1,6 @@
 package org.example;
 import org.example.usuarios.PanelClientes;
+import org.example.PanelFiltrosOrdenamiento;
 
 import javax.swing.*;
 import java.awt.*;
@@ -39,11 +40,12 @@ public class MenuPrincipal  extends JFrame {
         JTabbedPane tabsMenu = new JTabbedPane();
         tabsMenu.setFont(new Font("SansSerif", Font.PLAIN, 14));
 
-        tabsMenu.addTab("Catálogo de Materiales", new PanelCatalogoMateriales());
+        tabsMenu.addTab("Catálogo de Materiales", new PanelCatalogoMateriales(biblioteca));
         tabsMenu.addTab("Usuarios", new PanelClientes());
-        tabsMenu.addTab("Préstamos", crearPanelModulo("Gestión de Préstamos y Devoluciones"));
+        tabsMenu.addTab("Préstamos", new PanelReservas(biblioteca));
         tabsMenu.addTab("Reservas", new PanelReservas(biblioteca));
-        tabsMenu.addTab("Búsquedas y Filtros", crearPanelModulo("Búsquedas Recursivas Exactas/Flexibles y Filtros Genéricos"));
+        tabsMenu.addTab("Busqueda de Material", new PanelBusquedasMaterial(biblioteca));
+        tabsMenu.addTab("Busqueda por Filtro", new PanelFiltrosOrdenamiento(biblioteca));
 
         add(tabsMenu, BorderLayout.CENTER);
 

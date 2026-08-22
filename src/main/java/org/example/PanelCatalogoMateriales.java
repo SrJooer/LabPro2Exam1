@@ -16,6 +16,7 @@ public class PanelCatalogoMateriales extends JPanel {
     private final JLabel etiquetaBadgeComplejidad;
     private final JTable tablaMateriales;
     private final DefaultTableModel modeloTabla;
+    private final Biblioteca biblioteca;
 
     private final JPanel panelAtributosEspecificos;
     private final JTextField textoCampo1;
@@ -23,7 +24,8 @@ public class PanelCatalogoMateriales extends JPanel {
     private final JLabel etiquetaCampo1;
     private final JLabel etiquetaCampo2;
 
-    public PanelCatalogoMateriales() {
+    public PanelCatalogoMateriales(Biblioteca biblioteca) {
+        this.biblioteca = biblioteca;
         setLayout(new BorderLayout(15, 15));
         setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
 
@@ -146,26 +148,59 @@ public class PanelCatalogoMateriales extends JPanel {
 
     private void registrarMaterialEnTabla() {
         String titulo = textoTitulo.getText().trim();
-        String codigo = textoCodigo.getText().trim();
+        String codigoTexto = textoCodigo.getText().trim();
         String tipo = (String) comboTipoMaterial.getSelectedItem();
         NivelComplejidad nivel = (NivelComplejidad) comboComplejidad.getSelectedItem();
         String valor1 = textoCampo1.getText().trim();
         String valor2 = textoCampo2.getText().trim();
 
-        if (titulo.isEmpty() || codigo.isEmpty() || valor1.isEmpty() || valor2.isEmpty()) {
+        if (titulo.isEmpty() || codigoTexto.isEmpty() || valor1.isEmpty() || valor2.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Por favor complete todos los campos del material.", "Campos Incompletos", JOptionPane.WARNING_MESSAGE);
             return;
         }
 
-        String detalle = etiquetaCampo1.getText() + " " + valor1 + " | " + etiquetaCampo2.getText() + " " + valor2;
-        modeloTabla.addRow(new Object[]{codigo, titulo, tipo, nivel.name(), detalle});
+        try {
+            int codigo = Integer.parseInt(codigoTexto);
+            Image caratula = null;
+            String rutaImg = textoRutaImagen.getText().trim();
+            if (!rutaImg.isEmpty()) {
+                caratula = new ImageIcon(rutaImg).getImage();
+            }
 
-        JOptionPane.showMessageDialog(this, "Material registrado en el catálogo exitosamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+            int diasMaximoBase = 7;
+            MaterialBibliografico nuevoMaterial;
 
-        textoTitulo.setText("");
-        textoCodigo.setText("");
-        textoCampo1.setText("");
-        textoCampo2.setText("");
+            if (tipo.equals("Libro")) {
+                int paginas = Integer.parseInt(valor2);
+                int isbnSimulado = 123456789;
+                nuevoMaterial = new Libros(valor1, paginas, isbnSimulado, titulo, codigo, diasMaximoBase, nivel, caratula);
+            } else if (tipo.equals("Revista")) {
+                int edicion = Integer.parseInt(valor1);
+                nuevoMaterial = new Revistas(edicion, Periocidad.Mensual, titulo, codigo, diasMaximoBase, nivel, caratula);
+            } else {
+                int duracion = Integer.parseInt(valor1);
+                Formato formatoAudiovisual = Formato.values()[0];
+                nuevoMaterial = new Audiovisuales(duracion, formatoAudiovisual, titulo, codigo, diasMaximoBase, nivel, caratula);
+            }
+
+            biblioteca.registrarMaterial(nuevoMaterial);
+
+            String detalle = etiquetaCampo1.getText() + " " + valor1 + " | " + etiquetaCampo2.getText() + " " + valor2;
+            modeloTabla.addRow(new Object[]{codigo, titulo, tipo, nivel.name(), detalle});
+
+            JOptionPane.showMessageDialog(this, "Material registrado exitosamente en la Biblioteca.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+
+            textoTitulo.setText("");
+            textoCodigo.setText("");
+            textoCampo1.setText("");
+            textoCampo2.setText("");
+            textoRutaImagen.setText("");
+            etiquetaPortada.setIcon(null);
+            etiquetaPortada.setText("Sin Portada");
+
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "El código, número de páginas, edición o duración deben ser números válidos.", "Error de Formato", JOptionPane.ERROR_MESSAGE);
+        }
     }
 
     private void seleccionarImagen() {
