@@ -219,7 +219,7 @@ public class PanelCatalogoMateriales extends JPanel {
             ImageIcon icono = new ImageIcon(new ImageIcon(ruta).getImage()
                     .getScaledInstance(180, 240, Image.SCALE_SMOOTH));
             etiquetaPortada.setIcon(icono);
-            etiquetaPortada.setText("");
+            //etiquetaPortada.setText("");
         } else {
             etiquetaPortada.setIcon(null);
             etiquetaPortada.setText("Sin Portada Disponible");

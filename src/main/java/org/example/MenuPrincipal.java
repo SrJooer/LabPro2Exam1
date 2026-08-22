@@ -41,7 +41,7 @@ public class MenuPrincipal  extends JFrame {
         tabsMenu.setFont(new Font("SansSerif", Font.PLAIN, 14));
 
         tabsMenu.addTab("Catálogo de Materiales", new PanelCatalogoMateriales(biblioteca));
-        tabsMenu.addTab("Usuarios", new PanelClientes());
+        tabsMenu.addTab("Usuarios", new PanelClientes(biblioteca));
         tabsMenu.addTab("Préstamos", new PanelReservas(biblioteca));
         tabsMenu.addTab("Reservas", new PanelReservas(biblioteca));
         tabsMenu.addTab("Busqueda de Material", new PanelBusquedasMaterial(biblioteca));

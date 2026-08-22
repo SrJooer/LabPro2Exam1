@@ -69,22 +69,35 @@ public class Biblioteca {
     }
 
     public void devolverMaterial(MaterialBibliografico material, Usuario usuario) {
-        material.devolverMaterial();
-        Prestamo prestamo = new Prestamo(usuario, material, LocalDate.now());
-        usuario.registrarDevolucion(prestamo);
+        Prestamo prestamo = usuario.buscarPrestamoActivo(material);
+    if (prestamo == null) {
+        System.out.println("Este usuario no tiene un préstamo activo de este material.");
+        return;
+    }
 
-        for (int i = 0; i < colaReservas.size(); i++) {
-            Reservas reserva = colaReservas.get(i);
-            if (reserva.codigoMaterial == material.getCodigo()) {
-                colaReservas.remove(i);
-                try {
-                    solicitarPrestamo(material, reserva.usuario);
-                } catch (Excepciones e) {
-                    System.out.println("No se pudo asignar la reserva automáticamente: " + e.getMessage());
-                }
-                break;
+    prestamo.registrarDevolucion(LocalDate.now()); 
+    material.devolverMaterial();
+    usuario.registrarDevolucion(prestamo);
+
+    
+    if (prestamo.seDevolvioTarde()) {
+        int diasRetraso = prestamo.getDiasRetraso(LocalDate.now());
+        calcularPenalizacion(usuario, diasRetraso);
+    }
+
+    
+    for (int i = 0; i < colaReservas.size(); i++) {
+        Reservas reserva = colaReservas.get(i);
+        if (reserva.getCodigoMaterial() == material.getCodigo()) {
+            colaReservas.remove(i);
+            try {
+                solicitarPrestamo(material, reserva.getUsuario());
+            } catch (Excepciones e) {
+                System.out.println("No se pudo asignar la reserva automáticamente: " + e.getMessage());
             }
+            break;
         }
+    }
     }
 
     public void reservarMaterial(MaterialBibliografico material, Usuario usuario) throws ReservaExcepcion {

@@ -1,16 +1,21 @@
 package org.example.usuarios;
+import org.example.Biblioteca;
+import org.example.DatosNulosExcepcion;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 
 public class PanelClientes extends JPanel {
+    private final Biblioteca biblioteca;
     private final JTextField textoIdUsuario;
     private final JTextField textoNombreUsuario;
     private final JComboBox<String> comboPerfilUsuario;
     private final JTable tablaUsuarios;
     private final DefaultTableModel modeloTablaUsuarios;
 
-    public PanelClientes() {
+    public PanelClientes(Biblioteca biblioteca) {
+        this.biblioteca = biblioteca;
+
         setLayout(new BorderLayout(15, 15));
         setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
 
@@ -76,13 +81,32 @@ public class PanelClientes extends JPanel {
             return;
         }
 
-        String limitePrestamos = perfil.equals("Estándar") ? "2" : "5";
+         try {
+            Usuario nuevoUsuario;
+            if (perfil.equals("Estándar")) {
+                nuevoUsuario = new UsuarioEstandar(id, nombre);
+            } else {
+                nuevoUsuario = new UsuarioPremium(id, nombre);
+            }
 
-        modeloTablaUsuarios.addRow(new Object[]{id, nombre, perfil, limitePrestamos, "0", "No"});
+            biblioteca.registrarUsuario(nuevoUsuario); 
 
-        JOptionPane.showMessageDialog(this, "Usuario " + perfil + " registrado exitosamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+            modeloTablaUsuarios.addRow(new Object[]{
+                    nuevoUsuario.getId(),
+                    nuevoUsuario.getNombre(),
+                    nuevoUsuario.getTipoPerfil(),
+                    nuevoUsuario.getLimitePrestamos(),
+                    nuevoUsuario.getPrestamos().size(),
+                    "No"
+            });
 
-        textoIdUsuario.setText("");
-        textoNombreUsuario.setText("");
+            JOptionPane.showMessageDialog(this, "Usuario " + perfil + " registrado exitosamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+
+            textoIdUsuario.setText("");
+            textoNombreUsuario.setText("");
+
+        } catch (DatosNulosExcepcion e) {
+            JOptionPane.showMessageDialog(this, e.getMessage(), "Error de Datos", JOptionPane.ERROR_MESSAGE);
+        }
     }
 }
