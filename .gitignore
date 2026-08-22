@@ -37,3 +37,15 @@ build/
 
 ### Mac OS ###
 .DS_Store
+
+### Compilados ###
+*.class
+out/
+bin/
+*.log
+hs_err_pid*
+replay_pid*
+
+# el sdk lo tiene configurado distinto cada quien
+.idea/misc.xml
+.idea/workspace.xml
