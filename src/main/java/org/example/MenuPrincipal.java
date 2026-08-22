@@ -7,9 +7,11 @@ import java.awt.*;
 public class MenuPrincipal  extends JFrame {
 
     private final EmpleadoAutorizado empleadoActual;
+    private final Biblioteca biblioteca;
 
     public MenuPrincipal(EmpleadoAutorizado empleado) {
         this.empleadoActual = empleado;
+        this.biblioteca = DatosIniciales.crearBiblioteca();
 
         setTitle("Menu Principal");
         setSize(1000, 1000);
@@ -39,7 +41,8 @@ public class MenuPrincipal  extends JFrame {
 
         tabsMenu.addTab("Catálogo de Materiales", new PanelCatalogoMateriales());
         tabsMenu.addTab("Usuarios", new PanelClientes());
-        tabsMenu.addTab("Préstamos y Reservas", crearPanelModulo("Gestión de Préstamos, Devoluciones y Cola de Espera"));
+        tabsMenu.addTab("Préstamos", crearPanelModulo("Gestión de Préstamos y Devoluciones"));
+        tabsMenu.addTab("Reservas", new PanelReservas(biblioteca));
         tabsMenu.addTab("Búsquedas y Filtros", crearPanelModulo("Búsquedas Recursivas Exactas/Flexibles y Filtros Genéricos"));
 
         add(tabsMenu, BorderLayout.CENTER);

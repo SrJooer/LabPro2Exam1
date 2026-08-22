@@ -3,7 +3,7 @@ package org.example;
 
 import java.awt.Image;
 
-public abstract class Audiovisuales extends MaterialBibliografico {
+public class Audiovisuales extends MaterialBibliografico {
    private int duracionMinutos;
    private Formato formato;
 
@@ -12,7 +12,8 @@ public abstract class Audiovisuales extends MaterialBibliografico {
         this.duracionMinutos = duracionMinutos;
         this.formato = formato;
     }
-    public String obtenerDscripcion(){
+    @Override
+    public String obtenerDescripcion(){
         return "Material audiovisual: \"" + titulo + "\" (" + formato + ", " 
                 + duracionMinutos + " min)";
     }

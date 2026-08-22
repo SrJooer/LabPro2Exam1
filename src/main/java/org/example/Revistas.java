@@ -2,11 +2,11 @@
 package org.example;
 import java.awt.Image;
 
-public abstract class Revistas extends MaterialBibliografico{
+public class Revistas extends MaterialBibliografico{
     private int numeroEdicion;
     private Periocidad periocidad;
 
-    public Revistas(int numeroEdicion, Periocidad periodicidad, String titulo, int codigo,
+    public Revistas(int numeroEdicion, Periocidad periocidad, String titulo, int codigo,
                    int diasMaximo, NivelComplejidad nivel, Image caratula) {
         super(titulo, codigo, diasMaximo, nivel, caratula);
         this.numeroEdicion = numeroEdicion;
