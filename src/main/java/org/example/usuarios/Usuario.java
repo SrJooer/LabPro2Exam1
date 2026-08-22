@@ -1,10 +1,14 @@
 package org.example.usuarios;
+
 import org.example.DatosNulosExcepcion;
 import org.example.MaterialBibliografico;
 import org.example.NivelComplejidad;
+import org.example.prestamos.Prestamo;
 
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
-import java.util.Calendar;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -12,17 +16,15 @@ public abstract class Usuario {
 
     private final String id;
     private String nombre;
-
     private final List<MaterialBibliografico> prestamosActivos = new ArrayList<>();
-
-    private Calendar penalizadoHasta;
+    private final List<Prestamo> historial = new ArrayList<>();
+    private LocalDate penalizadoHasta;
 
     protected Usuario(String id, String nombre) throws DatosNulosExcepcion {
         if (id == null || nombre == null) {
-             throw new DatosNulosExcepcion();
+            throw new DatosNulosExcepcion();
         }
-
-        if (id.isEmpty() || nombre.isEmpty()) {
+        if (id.isBlank() || nombre.isBlank()) {
             throw new IllegalArgumentException("Los datos no pueden estar vacios");
         }
         this.id = id;
@@ -30,59 +32,105 @@ public abstract class Usuario {
     }
 
     public abstract int getLimitePrestamos();
+
     public abstract boolean puedeReservar();
+
     public abstract boolean puedeAcceder(NivelComplejidad nivel);
+
     public abstract String getTipoPerfil();
 
-    public boolean haAlcanzadoLimite() { return prestamosActivos.size() >= getLimitePrestamos(); }
+    public boolean haAlcanzadoLimite() {
+        return prestamosActivos.size() >= getLimitePrestamos();
+    }
 
     public int getPrestamosDisponibles() {
         return Math.max(0, getLimitePrestamos() - prestamosActivos.size());
     }
 
-    public boolean tienePrestado(MaterialBibliografico prestamo) {
-        return prestamosActivos.contains(prestamo);
+    public boolean tienePrestado(MaterialBibliografico material) {
+        return prestamosActivos.contains(material);
     }
 
-    public void registrarPrestamo(MaterialBibliografico prestamo) { prestamosActivos.add(prestamo); }
+    public void registrarPrestamo(Prestamo prestamo) {
+        Objects.requireNonNull(prestamo, "El prestamo no puede ser nulo");
+        prestamosActivos.add(prestamo.getMaterial());
+        historial.add(prestamo);
+    }
 
-    public boolean registrarDevolucion(MaterialBibliografico prestamo) {
-        return prestamosActivos.remove(prestamo);
+    public boolean registrarDevolucion(Prestamo prestamo) {
+        Objects.requireNonNull(prestamo, "El prestamo no puede ser nulo");
+        return prestamosActivos.remove(prestamo.getMaterial());
+    }
+
+    public Prestamo buscarPrestamoActivo(MaterialBibliografico material) {
+        for (Prestamo prestamo : historial) {
+            if (prestamo.estaActivo() && prestamo.getMaterial().equals(material)) {
+                return prestamo;
+            }
+        }
+        return null;
     }
 
     public List<MaterialBibliografico> getPrestamos() {
-        return prestamosActivos;
+        return Collections.unmodifiableList(prestamosActivos);
     }
 
-    
-
-    public boolean estaPenalizado(Calendar fecha) {
-        return penalizadoHasta != null && fecha.after(penalizadoHasta);
+    public List<Prestamo> getHistorial() {
+        return Collections.unmodifiableList(historial);
     }
 
-    public void aplicarPenalizacion(int dias) {
-        Calendar fechaPenalizacion = Calendar.getInstance();
-        fechaPenalizacion.add(Calendar.DAY_OF_MONTH, dias);
-        penalizadoHasta = fechaPenalizacion;
+    public boolean estaPenalizado(LocalDate fecha) {
+        return penalizadoHasta != null && !fecha.isAfter(penalizadoHasta);
     }
 
-    public Calendar getPenalizadoHasta() { return penalizadoHasta; }
-    public void quitarPenalizacion() { this.penalizadoHasta = null; }
+    public void aplicarPenalizacion(LocalDate desde, int dias) {
+        if (dias <= 0) {
+            return;
+        }
+        LocalDate inicio = (penalizadoHasta != null && penalizadoHasta.isAfter(desde))
+                ? penalizadoHasta
+                : desde;
+        penalizadoHasta = inicio.plusDays(dias);
+    }
 
-    public String getId() { return id; }
-    public String getNombre() { return nombre; }
+    public int getDiasPenalizacionRestantes(LocalDate fecha) {
+        if (!estaPenalizado(fecha)) {
+            return 0;
+        }
+        return (int) ChronoUnit.DAYS.between(fecha, penalizadoHasta) + 1;
+    }
+
+    public LocalDate getPenalizadoHasta() {
+        return penalizadoHasta;
+    }
+
+    public void quitarPenalizacion() {
+        this.penalizadoHasta = null;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public String getNombre() {
+        return nombre;
+    }
 
     public void setNombre(String nombre) {
         if (nombre == null || nombre.isBlank()) {
-            throw new IllegalArgumentException("El nombre del usuario está vacío");
+            throw new IllegalArgumentException("El nombre del usuario esta vacio");
         }
         this.nombre = nombre;
     }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Usuario otro)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof Usuario otro)) {
+            return false;
+        }
         return id.equals(otro.id);
     }
 

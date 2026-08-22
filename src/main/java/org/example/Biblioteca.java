@@ -1,7 +1,8 @@
-
 package org.example;
 
+import org.example.prestamos.Prestamo;
 import org.example.usuarios.Usuario;
+import java.time.LocalDate;
 import java.util.*;
 
 public class Biblioteca {
@@ -19,6 +20,24 @@ public class Biblioteca {
         usuarios.add(usuario);
     }
 
+    public List<Usuario> getUsuarios() {
+        return usuarios;
+    }
+
+    public List<MaterialBibliografico> getCatalogo() {
+        return catalogo;
+    }
+
+    public List<Usuario> getColaDeReservas(MaterialBibliografico material) {
+        List<Usuario> lista = new ArrayList<>();
+        for (Reservas r : colaReservas) {
+            if (r.getCodigoMaterial() == material.getCodigo()) {
+                lista.add(r.getUsuario());
+            }
+        }
+        return lista;
+    }
+
     public void solicitarPrestamo(MaterialBibliografico material, Usuario usuario) throws Excepciones {
         if (!material.disponible()) {
             throw new MaterialPrestado(material.getTitulo());
@@ -26,7 +45,7 @@ public class Biblioteca {
         if (usuario.haAlcanzadoLimite()) {
             throw new LimiteException(usuario.getNombre(), usuario.getLimitePrestamos());
         }
-        if (usuario.estaPenalizado(Calendar.getInstance())) {
+        if (usuario.estaPenalizado(LocalDate.now())) {
             throw new PenalizacionExcepcion(usuario.getNombre(), usuario.getPenalizadoHasta());
         }
         if (!usuario.puedeAcceder(material.getNivel())) {
@@ -34,7 +53,8 @@ public class Biblioteca {
         }
 
         material.prestarMaterial();
-        usuario.registrarPrestamo(material);
+        Prestamo prestamo = new Prestamo(usuario, material, LocalDate.now());
+        usuario.registrarPrestamo(prestamo);
         registrarEnHistorial(material.getCodigo());
     }
 
@@ -50,7 +70,8 @@ public class Biblioteca {
 
     public void devolverMaterial(MaterialBibliografico material, Usuario usuario) {
         material.devolverMaterial();
-        usuario.registrarDevolucion(material);
+        Prestamo prestamo = new Prestamo(usuario, material, LocalDate.now());
+        usuario.registrarDevolucion(prestamo);
 
         for (int i = 0; i < colaReservas.size(); i++) {
             Reservas reserva = colaReservas.get(i);
@@ -66,13 +87,22 @@ public class Biblioteca {
         }
     }
 
-    public void reservarMaterial(MaterialBibliografico material, Usuario usuario) {
+    public void reservarMaterial(MaterialBibliografico material, Usuario usuario) throws ReservaExcepcion {
         if (!usuario.puedeReservar()) {
-            System.out.println("Este usuario no tiene permitido reservar materiales.");
-            return;
+            throw new ReservaExcepcion("Este usuario no tiene permitido reservar materiales.");
         }
         colaReservas.add(new Reservas(material.getCodigo(), usuario));
         material.reservar(usuario.getNombre());
+    }
+
+    public boolean cancelarReserva(MaterialBibliografico material, Usuario usuario) {
+        boolean eliminado = colaReservas.removeIf(r -> r.getCodigoMaterial() == material.getCodigo()
+                && r.getUsuario().getId().equals(usuario.getId()));
+
+        if (eliminado) {
+            material.cancelarReserva();
+        }
+        return eliminado;
     }
 
     public MaterialBibliografico buscarPorCodigo(int codigo) {
@@ -109,10 +139,10 @@ public class Biblioteca {
     }
 
     public void calcularPenalizacion(Usuario usuario, int diasRetraso) {
-        if (diasRetraso <= 0) {
+        if (usuario == null || diasRetraso <= 0) {
             return;
         }
-        usuario.aplicarPenalizacion(diasRetraso * 2);
+        usuario.aplicarPenalizacion(LocalDate.now(), diasRetraso * 2);
     }
 
     public List<Historial> materialesMasSolicitados() {

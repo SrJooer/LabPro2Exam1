@@ -5,14 +5,19 @@ import org.example.NivelComplejidad;
 
 public class UsuarioPremium extends Usuario {
 
-    private static final String TIPO_PERFIL = "PREMIUM";
+    private static final String TIPO_PERFIL = "Premium";
     private static final int LIMITE_BASE = 6;
     private static final int LIMITE_MAXIMO = 10;
 
     private int aniosAntiguedad;
 
     public UsuarioPremium(String id, String nombre) throws DatosNulosExcepcion {
+        this(id, nombre, 0);
+    }
+
+    public UsuarioPremium(String id, String nombre, int aniosAntiguedad) throws DatosNulosExcepcion {
         super(id, nombre);
+        setAniosAntiguedad(aniosAntiguedad);
     }
 
     @Override

@@ -1,5 +1,6 @@
 package org.example;
 import org.example.usuarios.PanelClientes;
+import org.example.PanelFiltrosOrdenamiento;
 
 import javax.swing.*;
 import java.awt.*;
@@ -11,7 +12,7 @@ public class MenuPrincipal  extends JFrame {
 
     public MenuPrincipal(EmpleadoAutorizado empleado) {
         this.empleadoActual = empleado;
-        this.biblioteca = new Biblioteca();
+        this.biblioteca = DatosIniciales.crearBiblioteca();
 
         setTitle("Menu Principal");
         setSize(1000, 1000);
@@ -41,9 +42,10 @@ public class MenuPrincipal  extends JFrame {
 
         tabsMenu.addTab("Catálogo de Materiales", new PanelCatalogoMateriales(biblioteca));
         tabsMenu.addTab("Usuarios", new PanelClientes());
-        tabsMenu.addTab("Préstamos y Reservas", crearPanelModulo("Gestión de Préstamos, Devoluciones y Cola de Espera"));
-        tabsMenu.addTab("Búsqueda de Material", new PanelBusquedasMaterial(biblioteca));
-        tabsMenu.addTab("Ordenamiento por Filtros", crearPanelModulo("Ordenamiento por Filtros"));
+        tabsMenu.addTab("Préstamos", new PanelReservas(biblioteca));
+        tabsMenu.addTab("Reservas", new PanelReservas(biblioteca));
+        tabsMenu.addTab("Busqueda de Material", new PanelBusquedasMaterial(biblioteca));
+        tabsMenu.addTab("Busqueda por Filtro", new PanelFiltrosOrdenamiento(biblioteca));
 
         add(tabsMenu, BorderLayout.CENTER);
 

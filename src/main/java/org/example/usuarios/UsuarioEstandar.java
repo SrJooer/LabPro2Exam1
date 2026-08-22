@@ -7,8 +7,8 @@ import javax.xml.crypto.Data;
 
 public class UsuarioEstandar extends Usuario {
 
-    private static final String TIPO_PERFIL = "estandar";
-    private static final int LIMITE_PRESTAMOS = 0;
+    private static final String TIPO_PERFIL = "Estandar";
+    private static final int LIMITE_PRESTAMOS = 3;
 
     public UsuarioEstandar(String id, String nombre) throws DatosNulosExcepcion {
         super(id, nombre);
@@ -21,7 +21,7 @@ public class UsuarioEstandar extends Usuario {
 
     @Override
     public boolean puedeReservar() {
-        return true;
+        return false;
     }
 
     @Override

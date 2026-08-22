@@ -60,6 +60,14 @@ public abstract class MaterialBibliografico implements Prestar, Reservar{
         }
     }
     
+    public boolean cancelarReserva(String usuario) {
+        return reservas.remove(usuario);
+    }
+    
+    public List<String> getReservas() {
+        return new ArrayList<>(reservas);
+    }
+    
     @Override
     public boolean hayReservasPendientes() {
         return !reservas.isEmpty();
