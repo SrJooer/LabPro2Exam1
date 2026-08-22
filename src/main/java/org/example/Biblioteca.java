@@ -1,6 +1,8 @@
 
 package org.example;
 import org.example.usuarios.Usuario;
+import org.example.prestamos.Prestamo;
+import java.time.LocalDate;
 import java.util.*;
 public class Biblioteca {
     private final List<Prestar> catalogo=new ArrayList<>();
@@ -21,7 +23,7 @@ public class Biblioteca {
         if (usuario.haAlcanzadoLimite()) {
             throw new LimiteException(usuario.getNombre(), usuario.getLimitePrestamos());
         }
-        if (usuario.estaPenalizado(Calendar.getInstance())) {
+        if (usuario.estaPenalizado(LocalDate.now())) {
             throw new PenalizacionExcepcion(usuario.getNombre(),usuario.getPenalizadoHasta());
         }
         if (!usuario.puedeAcceder(material.getNivel())) {
@@ -29,7 +31,7 @@ public class Biblioteca {
         }
 
         material.prestarMaterial();
-        usuario.registrarPrestamo(material);
+        usuario.registrarPrestamo(new Prestamo(usuario, material, LocalDate.now()));
         registrarEnHistorial(material.getCodigo());
     }
     
@@ -45,7 +47,13 @@ public class Biblioteca {
     
     public void devolverMaterial(MaterialBibliografico material, Usuario usuario) {
         material.devolverMaterial();
-        usuario.registrarDevolucion(material);
+
+        Prestamo prestamo = usuario.buscarPrestamoActivo(material);
+        if (prestamo != null) {
+            prestamo.registrarDevolucion(LocalDate.now());
+            usuario.registrarDevolucion(prestamo);
+            calcularPenalizacion(usuario, prestamo.getDiasRetraso(LocalDate.now()));
+        }
 
         
         for (int i = 0; i < colaReservas.size(); i++) {
@@ -106,7 +114,7 @@ public class Biblioteca {
         if (diasRetraso <= 0){
             return;
         }
-        usuario.aplicarPenalizacion(diasRetraso * 2);
+        usuario.aplicarPenalizacion(LocalDate.now(), diasRetraso * 2);
     }
      
      public List<Historial> materialesMasSolicitados() {
