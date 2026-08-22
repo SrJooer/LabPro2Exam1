@@ -1,17 +1,14 @@
 package org.example.usuarios;
 
+import org.example.DatosNulosExcepcion;
 import org.example.NivelComplejidad;
 
-/**
- * Inciso 5 - Perfil estandar: limite reducido, no puede reservar material que
- * otro tiene prestado y no accede al nivel de complejidad mas alto.
- */
 public class UsuarioEstandar extends Usuario {
 
     private static final String TIPO_PERFIL = "Estandar";
     private static final int LIMITE_PRESTAMOS = 3;
 
-    public UsuarioEstandar(String id, String nombre) {
+    public UsuarioEstandar(String id, String nombre) throws DatosNulosExcepcion {
         super(id, nombre);
     }
 
