@@ -70,13 +70,66 @@ public class Biblioteca {
         }
     }
     
-    public void reservarMaterial(MaterialBibliografico material, Usuario usuario) {
+    public void reservarMaterial(MaterialBibliografico material, Usuario usuario) throws Excepciones {
         if (!usuario.puedeReservar()) {
-            System.out.println("Este usuario no tiene permitido reservar materiales.");
-            return;
+            throw new ReservaExcepcion("el perfil " + usuario.getTipoPerfil() + " no tiene permitido reservar");
+        }
+        if (material.disponible()) {
+            throw new ReservaExcepcion("\"" + material.getTitulo() + "\" esta disponible, se puede prestar sin reservar");
+        }
+        if (usuario.tienePrestado(material)) {
+            throw new ReservaExcepcion(usuario.getNombre() + " ya tiene prestado \"" + material.getTitulo() + "\"");
+        }
+        if (yaReservo(material, usuario)) {
+            throw new ReservaExcepcion(usuario.getNombre() + " ya esta en la cola de \"" + material.getTitulo() + "\"");
         }
         colaReservas.add(new Reservas(material.getCodigo(), usuario));
         material.reservar(usuario.getNombre());
+    }
+
+    public boolean yaReservo(MaterialBibliografico material, Usuario usuario) {
+        for (Reservas reserva : colaReservas) {
+            if (reserva.getCodigoMaterial() == material.getCodigo()
+                    && reserva.getUsuario().equals(usuario)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean cancelarReserva(MaterialBibliografico material, Usuario usuario) {
+        for (int i = 0; i < colaReservas.size(); i++) {
+            Reservas reserva = colaReservas.get(i);
+            if (reserva.getCodigoMaterial() == material.getCodigo()
+                    && reserva.getUsuario().equals(usuario)) {
+                colaReservas.remove(i);
+                material.cancelarReserva(usuario.getNombre());
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public List<Usuario> getColaDeReservas(MaterialBibliografico material) {
+        List<Usuario> cola = new ArrayList<>();
+        for (Reservas reserva : colaReservas) {
+            if (reserva.getCodigoMaterial() == material.getCodigo()) {
+                cola.add(reserva.getUsuario());
+            }
+        }
+        return cola;
+    }
+
+    public List<Usuario> getUsuarios() {
+        return Collections.unmodifiableList(usuarios);
+    }
+
+    public List<MaterialBibliografico> getCatalogo() {
+        List<MaterialBibliografico> materiales = new ArrayList<>();
+        for (Prestar prestable : catalogo) {
+            materiales.add((MaterialBibliografico) prestable);
+        }
+        return materiales;
     }
     public MaterialBibliografico buscarPorCodigo(int codigo) {
         return buscarPorCodigoRecursivo(0, codigo);
