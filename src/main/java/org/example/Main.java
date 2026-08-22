@@ -6,4 +6,6 @@ public class Main {
 
         new PantallaInicioSesion(new GestionEmpleados());
     }
+}
+
 
