@@ -1,13 +1,44 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
+
 package org.example;
 
-/**
- *
- * @author vasqu
- */
-public class Audiovisuales {
+import java.awt.Image;
+
+public abstract class Audiovisuales extends MaterialBibliografico {
+   private int duracionMinutos;
+   private Formato formato;
+
+    public Audiovisuales(int duracionMinutos, Formato formato, String titulo, int codigo,int diasMaximo, NivelComplejidad nivel, Image caratula) {
+        super(titulo, codigo, diasMaximo, nivel, caratula);
+        this.duracionMinutos = duracionMinutos;
+        this.formato = formato;
+    }
+    public String obtenerDscripcion(){
+        return "Material audiovisual: \"" + titulo + "\" (" + formato + ", " 
+                + duracionMinutos + " min)";
+    }
+    @Override
+    public int calcularDias() {
+        int diasBase = diasMaximo;
+        return diasBase + nivel.getDiasAdicionales();
+    }
+    
+    
+    public int getDuracionMinutos() {
+        return duracionMinutos;
+    }
+
+    public Formato getFormato() {
+        return formato;
+    }
+
+    public void setDuracionMinutos(int duracionMinutos) {
+        this.duracionMinutos = duracionMinutos;
+    }
+
+    public void setFormato(Formato formato) {
+        this.formato = formato;
+    }
+   
+   
     
 }

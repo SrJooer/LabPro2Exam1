@@ -20,6 +20,13 @@ public abstract class Libros extends MaterialBibliografico{
          return "Libro: \"" + titulo + "\" de " + autor +
            " (" + numeroPaginas + " páginas, ISBN: " + ISBN + ")";
     }
+    
+    @Override
+    public int calcularDias(){
+        int diasBase=diasMaximo;
+        return diasBase+nivel.getDiasAdicionales();
+    
+    }
     public String getAutor() {
         return autor;
     }
