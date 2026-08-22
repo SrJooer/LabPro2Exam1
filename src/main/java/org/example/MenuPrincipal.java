@@ -40,7 +40,8 @@ public class MenuPrincipal  extends JFrame {
         tabsMenu.addTab("Catálogo de Materiales", new PanelCatalogoMateriales());
         tabsMenu.addTab("Usuarios", new PanelClientes());
         tabsMenu.addTab("Préstamos y Reservas", crearPanelModulo("Gestión de Préstamos, Devoluciones y Cola de Espera"));
-        tabsMenu.addTab("Búsquedas y Filtros", crearPanelModulo("Búsquedas Recursivas Exactas/Flexibles y Filtros Genéricos"));
+        tabsMenu.addTab("Búsqueda de Material", new PanelBusquedasMaterial());
+        tabsMenu.addTab("Ordenamiento por Filtros", crearPanelModulo("Ordenamiento por Filtros"));
 
         add(tabsMenu, BorderLayout.CENTER);
 
