@@ -14,7 +14,7 @@ public class GestionEmpleados {
 
     public boolean registrarEmpleado(EmpleadoAutorizado nuevoEmpleado) {
         if (nuevoEmpleado == null || !IdValido(nuevoEmpleado.getIdEmpleado())) {
-            return false; // Retorna falso si no cumple el formato de 6 dígitos
+            return false; 
         }
 
         for (EmpleadoAutorizado emp : listaEmpleados) {

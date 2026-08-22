@@ -1,6 +1,8 @@
 package org.example;
 
 import java.awt.Image;
+import java.util.List;
+import java.util.ArrayList;
 
 
 public abstract class MaterialBibliografico {
@@ -10,6 +12,7 @@ public abstract class MaterialBibliografico {
    protected int diasMaximo;
    protected NivelComplejidad nivel;
    protected Image caratula;
+   protected List<String> reservas = new ArrayList<>();
 
     public MaterialBibliografico(String titulo, int codigo, int diasMaximo, NivelComplejidad nivel, Image caratula) {
         this.titulo = titulo;
@@ -23,6 +26,8 @@ public abstract class MaterialBibliografico {
    public abstract String obtenerDescripcion();
    
    public abstract int calcularDias();
+   
+   
 
     public String getTitulo() {
         return titulo;
