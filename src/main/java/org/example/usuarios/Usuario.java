@@ -1,5 +1,5 @@
 package org.example.usuarios;
-
+import org.example.DatosNulosExcepcion;
 import org.example.MaterialBibliografico;
 import org.example.NivelComplejidad;
 
@@ -17,9 +17,9 @@ public abstract class Usuario {
 
     private Calendar penalizadoHasta;
 
-    protected Usuario(String id, String nombre) {
+    protected Usuario(String id, String nombre) throws DatosNulosExcepcion {
         if (id == null || nombre == null) {
-            throw new IllegalArgumentException("Los datos no pueden ser nulos");
+             throw new DatosNulosExcepcion();
         }
 
         if (id.isEmpty() || nombre.isEmpty()) {
@@ -54,7 +54,7 @@ public abstract class Usuario {
         return prestamosActivos;
     }
 
-    // Penalizaciones
+    
 
     public boolean estaPenalizado(Calendar fecha) {
         return penalizadoHasta != null && fecha.after(penalizadoHasta);

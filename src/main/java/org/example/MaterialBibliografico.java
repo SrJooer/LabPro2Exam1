@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.ArrayList;
 
 
-public abstract class MaterialBibliografico {
+public abstract class MaterialBibliografico implements Prestar, Reservar{
    protected String titulo;
    protected int codigo;
    protected boolean estadoPrestamo;
@@ -27,8 +27,43 @@ public abstract class MaterialBibliografico {
    
    public abstract int calcularDias();
    
+   @Override
+   public void prestarMaterial() throws MaterialPrestado{
+       if(!disponible()){
+            throw new MaterialPrestado(titulo);
+       }
+       this.estadoPrestamo=true;
+   }
+   @Override
+   public void devolverMaterial() {
+        this.estadoPrestamo = false;
+    }
    
-
+   @Override
+    public boolean disponible() {
+        return !estadoPrestamo;
+    }
+    
+    @Override
+    public boolean reservar(String usuario) {
+    if (reservas.contains(usuario)) {
+        return false; 
+    }
+    reservas.add(usuario);
+    return true;
+}
+    
+    @Override
+    public void cancelarReserva() {
+        if (!reservas.isEmpty()) {
+         reservas.remove(0); 
+        }
+    }
+    
+    @Override
+    public boolean hayReservasPendientes() {
+        return !reservas.isEmpty();
+    }   
     public String getTitulo() {
         return titulo;
     }

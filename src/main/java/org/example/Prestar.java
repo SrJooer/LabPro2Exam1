@@ -2,7 +2,7 @@
 package org.example;
 
 public interface Prestar {
-    void prestarMaterial();
+    void prestarMaterial() throws MaterialPrestado;
     void devolverMaterial();
     boolean disponible();
     

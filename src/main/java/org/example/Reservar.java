@@ -2,7 +2,7 @@
 package org.example;
 
 public interface Reservar {
-    boolean reservar();
+    boolean reservar(String usuario);
     void cancelarReserva();
     boolean hayReservasPendientes();
     
