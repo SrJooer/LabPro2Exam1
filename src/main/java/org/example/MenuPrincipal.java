@@ -1,4 +1,6 @@
 package org.example;
+import org.example.usuarios.PanelClientes;
+
 import javax.swing.*;
 import java.awt.*;
 
@@ -36,7 +38,7 @@ public class MenuPrincipal  extends JFrame {
         tabsMenu.setFont(new Font("SansSerif", Font.PLAIN, 14));
 
         tabsMenu.addTab("Catálogo de Materiales", new PanelCatalogoMateriales());
-        tabsMenu.addTab("Usuarios", crearPanelModulo("Registro y Administración de Usuarios Estándar y Premium"));
+        tabsMenu.addTab("Usuarios", new PanelClientes());
         tabsMenu.addTab("Préstamos y Reservas", crearPanelModulo("Gestión de Préstamos, Devoluciones y Cola de Espera"));
         tabsMenu.addTab("Búsquedas y Filtros", crearPanelModulo("Búsquedas Recursivas Exactas/Flexibles y Filtros Genéricos"));
 
